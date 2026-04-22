@@ -6,7 +6,7 @@ It includes:
 
 - a working UE4SS v3.0.1 RoboQuest runtime patch set
 - RoboQuest-specific generator and helper scripts
-- an end-to-end dump script that can point at a local RoboQuest install and collect the useful modding artifacts
+- an end-to-end dump script that can point at a local RoboQuest install, recover AES candidates, and collect the useful modding artifacts
 - a minimal SDK-generation tool snapshot
 - small ready-to-run tool binaries
 - setup/bootstrap scripts for a fresh machine
@@ -22,6 +22,7 @@ It does not commit RoboQuest-derived dump trees, extracted assets, generated Unr
 3. Run `tooling/setup/dump_modding_artifacts.ps1 -GameRoot '<your RoboQuest install root>' -LaunchForUht`.
 4. Read `docs/10_generation_pipeline.md`.
 5. Generate your local `projects/` outputs from the dumped data.
+6. Read `THIRD_PARTY_NOTICES.md` before redistributing any of the bundled binaries.
 
 The setup scripts auto-detect UE 4.26 from common install paths, `UE426_ROOT`, and the Windows registry. Users only need to pass `-EngineRoot` when that auto-detection fails.
 
@@ -51,6 +52,8 @@ The setup scripts auto-detect UE 4.26 from common install paths, `UE426_ROOT`, a
   - `tooling/roboquest_scripts_snapshot/jmap_to_uht.py`
 - Dump pipeline:
   - `tooling/setup/dump_modding_artifacts.ps1`
+- AES candidate scan:
+  - `tooling/setup/dump_aes_keys.py`
 - SDK generation snapshot:
   - `tooling/sdk_dump_tools_snapshot/`
 - Workspace bootstrap:
@@ -58,6 +61,10 @@ The setup scripts auto-detect UE 4.26 from common install paths, `UE426_ROOT`, a
   - `tooling/setup/bootstrap_external_sources.ps1`
 - Current learnings:
   - `docs/07_jmap_static_mirror_learnings.md`
+- Repo/legal metadata:
+  - `LICENSE`
+  - `CONTRIBUTING.md`
+  - `THIRD_PARTY_NOTICES.md`
 
 ## Local Prerequisites
 
@@ -77,3 +84,5 @@ This repo is intended to help RoboQuest modders:
 - inspect the current generator logic and notes
 
 It is a builder/bootstrap repo, not a redistributable RoboQuest SDK.
+
+When regenerating an existing local project output, use `tooling/setup/generate_editor_project.ps1 -Clean` so the script is explicitly allowed to replace the generated output tree.

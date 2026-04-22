@@ -20,7 +20,7 @@ Output
     form, ready for a non-IDA byte-flipper to apply).
 """
 import json
-import os
+from pathlib import Path
 
 try:
     import ida_auto
@@ -34,6 +34,10 @@ try:
     import ida_loader
 except ImportError as e:
     raise SystemExit(f"Must run inside IDA: {e}")
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+EXPECTED_INPUT_SHA256 = "8AC18FBFFC1EF96B0662D4A2D537B3F224C26D65CAABA7989A9404C566102B26"
+EXPECTED_OUTPUT_SHA256 = "C397DD1019BDD33BCD81C48DF95C5BF0BC6B3C2D1E26EDFEE42ACB47C3CADB15"
 
 
 def log(msg: str) -> None:
@@ -102,9 +106,15 @@ def main() -> None:
         })
         log(f"  patch {fatal_store_ea:#x}  file_off=0x{file_off:x}  fn={fn_name}")
 
-    plan_path = "E:/RoboQuestReverse/ue4ss_patch/ftext_patch_plan.json"
-    with open(plan_path, "w", encoding="utf-8") as f:
-        json.dump({"patches": patches, "dll": "UE4SS.dll"}, f, indent=2)
+    plan_path = REPO_ROOT / "runtime" / "UE4SS_patch_analysis" / "ftext_patch_plan.json"
+    plan_path.parent.mkdir(parents=True, exist_ok=True)
+    with plan_path.open("w", encoding="utf-8") as f:
+        json.dump({
+            "dll": "UE4SS.dll",
+            "expected_input_sha256": EXPECTED_INPUT_SHA256,
+            "expected_output_sha256": EXPECTED_OUTPUT_SHA256,
+            "patches": patches,
+        }, f, indent=2)
     log(f"wrote {plan_path} with {len(patches)} patch(es)")
     idc.qexit(0)
 

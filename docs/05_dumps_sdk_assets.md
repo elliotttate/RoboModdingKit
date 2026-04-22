@@ -4,7 +4,7 @@ The fastest way to populate most of this folder is:
 
 ```powershell
 & '.\tooling\setup\dump_modding_artifacts.ps1' `
-  -GameRoot 'E:\SteamLibrary\steamapps\common\RoboQuest' `
+  -GameRoot 'C:\Games\RoboQuest' `
   -LaunchForUht `
   -CollectExtrasIfPresent `
   -GeneratePakListing
@@ -30,6 +30,16 @@ Useful files:
 - `UHTHeaderDump/`
 - `UE4SS_ObjectDump.txt`
 - `UE4SS.log`
+
+## Crypto / Pak Keys
+
+- `references/crypto`
+
+Useful files:
+
+- `aes_candidates.json`
+
+This contains ranked AES key candidates recovered from the Shipping executable. When a local pak is available, the dump pipeline also records which candidate was verified with `repak`.
 
 ## Blueprint JSON
 
@@ -92,7 +102,9 @@ Example `repak` listing:
 
 ```powershell
 $RepoRoot = (Resolve-Path '.').Path
-& (Join-Path $RepoRoot 'tooling\bin\repak.exe') list 'E:\Path\To\RoboQuest_legacy.pak'
+& (Join-Path $RepoRoot 'tooling\bin\repak.exe') `
+  -a '<aes key>' `
+  list 'C:\Path\To\RoboQuest-WindowsNoEditor.pak'
 ```
 
 Example `retoc` help:

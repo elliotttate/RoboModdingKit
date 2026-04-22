@@ -25,12 +25,15 @@ from __future__ import annotations
 
 import re
 import sys
+import os
 from collections import defaultdict
 from pathlib import Path
 
-PSEUDOCODE_DIR = Path("E:/RoboQuestReverse/pseudocode")
-PROJECT_SRC = Path("E:/RoboQuestReverse/project/RoboQuest/Source")
-INDEX_MD = Path("E:/RoboQuestReverse/project/RoboQuest/_reference/PSEUDOCODE_INDEX.md")
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_PROJECT_ROOT = REPO_ROOT / "projects" / "RoboQuest_jmap_426_local"
+PSEUDOCODE_DIR = Path(os.environ.get("ROBOMODDINGKIT_PSEUDOCODE_DIR", REPO_ROOT / "references" / "pseudocode"))
+PROJECT_SRC = Path(os.environ.get("ROBOMODDINGKIT_PROJECT_SRC", DEFAULT_PROJECT_ROOT / "Source"))
+INDEX_MD = Path(os.environ.get("ROBOMODDINGKIT_PSEUDOCODE_INDEX", DEFAULT_PROJECT_ROOT / "_reference" / "PSEUDOCODE_INDEX.md"))
 
 CPP_FN_DEF = re.compile(
     r"^([A-Za-z_][\w:<>,\s*&]*?\s)(\w+)::(\w+)\s*\(([^)]*)\)\s*\{\s*\}\s*$",

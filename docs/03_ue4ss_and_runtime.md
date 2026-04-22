@@ -9,7 +9,6 @@ The working runtime copy is:
 Important files:
 
 - `UE4SS.dll`
-- `UE4SS.dll.bak_ftext_original`
 - `UE4SS-settings.ini`
 - `dwmapi.dll`
 - `Mods/`
@@ -20,11 +19,9 @@ This setup contains the UE4SS v3.0.1 path that was patched to get RoboQuest past
 
 Reference artifacts:
 
-- `runtime/UE4SS_patch_analysis/UE4SS_live_working.dll`
 - `runtime/UE4SS_patch_analysis/UE4SS_original.dll`
-- `runtime/UE4SS_patch_analysis/UE4SS_patched_v2.dll`
+- `runtime/UE4SS_patch_analysis/ftext_patch_plan.json`
 - `runtime/UE4SS_patch_analysis/*.log`
-- `runtime/UE4SS_patch_analysis/*.json`
 
 ## UE4SS Source / Patch Workspace
 
@@ -56,7 +53,6 @@ That dump is useful for:
 If you want to apply the working runtime to a RoboQuest install, the main files to compare or deploy are:
 
 - `UE4SS.dll`
-- `UE4SS.dll.bak_ftext_original`
 - `UE4SS-settings.ini`
 - `dwmapi.dll`
 - `Mods/`
@@ -67,3 +63,5 @@ The kit copy is a reference deployment. Check the current target game's `Binarie
 
 - The runtime folder is a working local reference, not a full copied game install.
 - If you deploy it into another RoboQuest install, keep the game-specific loader setup consistent.
+- The included `UE4SS-settings.ini` keeps crash dumping enabled. UE4SS minidumps are written into `RoboQuest\Binaries\Win64` as `crash_*.dmp` when the runtime crashes.
+- `runtime/UE4SS_patch_analysis/ftext_patch_plan.json` records the expected input/output SHA-256 values for the known-good UE4SS patch path so automated patchers can reject mismatched inputs.

@@ -29,7 +29,7 @@ The repo includes a direct collection script:
 
 ```powershell
 & '.\tooling\setup\dump_modding_artifacts.ps1' `
-  -GameRoot 'E:\SteamLibrary\steamapps\common\RoboQuest' `
+  -GameRoot 'C:\Games\RoboQuest' `
   -LaunchForUht `
   -CollectExtrasIfPresent `
   -GeneratePakListing
@@ -53,6 +53,8 @@ Preferred wrapper:
 ```powershell
 & '.\tooling\setup\generate_editor_project.ps1' -GenerateProjectFiles -Build
 ```
+
+When replacing an existing generated output tree, add `-Clean`. If the cached engine-header mirror looks stale after an engine reinstall, add `-RefreshEngineReference`.
 
 The repo will auto-detect UE 4.26 unless you pass `-EngineRoot`.
 

@@ -1,4 +1,7 @@
 {
+  "dll": "UE4SS.dll",
+  "expected_input_sha256": "8AC18FBFFC1EF96B0662D4A2D537B3F224C26D65CAABA7989A9404C566102B26",
+  "expected_output_sha256": "C397DD1019BDD33BCD81C48DF95C5BF0BC6B3C2D1E26EDFEE42ACB47C3CADB15",
   "patches": [
     {
       "description": "FText error emplace in sub_180354130",
@@ -32,6 +35,5 @@
       "old_byte": 1,
       "new_byte": 0
     }
-  ],
-  "dll": "UE4SS.dll"
+  ]
 }

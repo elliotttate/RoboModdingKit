@@ -4,9 +4,11 @@ Updated: 2026-04-22
 
 ## Goal
 
-Use `jmap` reflection data to generate a UE 4.27 C++ mirror project that can survive `UnrealHeaderTool` and, eventually, compile cleanly enough to be useful for reverse engineering and editor inspection.
+Use `jmap` reflection data to generate a UE 4.26 C++ mirror project that can survive `UnrealHeaderTool` and, eventually, compile cleanly enough to be useful for reverse engineering and editor inspection.
 
 This document records what the generator has learned so far. It is a process log, not a polished spec.
+
+Historical note: some intermediate generator experiments were validated against a local UE 4.27 install before the kit target was locked to RoboQuest's UE 4.26.2 runtime. Those entries are preserved as intermediate findings, but the supported kit scripts target UE 4.26.
 
 ## Ground Rules
 

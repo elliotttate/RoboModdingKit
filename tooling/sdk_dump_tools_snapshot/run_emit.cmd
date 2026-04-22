@@ -6,6 +6,17 @@ if "%~2"=="" (
     exit /b 1
 )
 
-call "E:\SteamLibrary\steamapps\common\RoboQuest\sdk_dump_tools\build_emit.cmd" || exit /b 1
-"E:\SteamLibrary\steamapps\common\RoboQuest\sdk_dump_tools\build\rq_sdkgenny_emit.exe" "%~1" "%~2" || exit /b 1
+set "SCRIPT_DIR=%~dp0"
+if "%SCRIPT_DIR:~-1%"=="\" set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
+set "EMITTER=%SCRIPT_DIR%\bin\rq_sdkgenny_emit.exe"
 
+if not exist "%EMITTER%" (
+    if "%~3"=="" (
+        echo The prebuilt emitter is missing. Pass a sdkgenny checkout as the optional third argument to rebuild it.
+        exit /b 1
+    )
+    call "%SCRIPT_DIR%\build_emit.cmd" "%~3" || exit /b 1
+    set "EMITTER=%SCRIPT_DIR%\build\rq_sdkgenny_emit.exe"
+)
+
+"%EMITTER%" "%~1" "%~2" || exit /b 1

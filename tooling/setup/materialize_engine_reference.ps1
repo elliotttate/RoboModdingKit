@@ -1,11 +1,16 @@
 param(
     [string]$EngineRoot,
-    [string]$DestinationRoot = (Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) 'tooling\generated\engine_module_reference'),
+    [string]$DestinationRoot,
     [switch]$CopyInsteadOfJunctions
 )
 
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'resolve_ue426_root.ps1')
+
+if (-not $DestinationRoot) {
+    $DestinationRoot = Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) 'tooling\generated\engine_module_reference'
+}
+$DestinationRoot = [System.IO.Path]::GetFullPath($DestinationRoot)
 
 function Ensure-Directory([string]$Path) {
     New-Item -ItemType Directory -Path $Path -Force | Out-Null
@@ -19,13 +24,17 @@ function Link-Or-CopyPublicDir([string]$SourcePublicDir, [string]$DestinationPub
     Ensure-Directory (Split-Path $DestinationPublicDir -Parent)
 
     if (-not $CopyOnly) {
+        $mklinkFailure = $null
         try {
             & cmd /c "mklink /J `"$DestinationPublicDir`" `"$SourcePublicDir`"" | Out-Null
             if ($LASTEXITCODE -eq 0) {
                 return
             }
+            $mklinkFailure = "mklink /J exited with code $LASTEXITCODE"
         } catch {
+            $mklinkFailure = $_.Exception.Message
         }
+        Write-Warning "Falling back to copying $SourcePublicDir because directory junction creation failed for $DestinationPublicDir. $mklinkFailure"
     }
 
     $null = & robocopy $SourcePublicDir $DestinationPublicDir /E /XJ /NFL /NDL /NJH /NJS /NP
@@ -35,12 +44,13 @@ function Link-Or-CopyPublicDir([string]$SourcePublicDir, [string]$DestinationPub
 }
 
 $resolvedEngineRoot = Resolve-UE426Root -PreferredPath $EngineRoot
-if ((Join-Path $resolvedEngineRoot 'Engine') -and (Test-Path -LiteralPath (Join-Path $resolvedEngineRoot 'Engine\Source'))) {
+$engineSourceRoot = Join-Path $resolvedEngineRoot 'Engine\Source'
+if (Test-Path -LiteralPath $engineSourceRoot) {
     $installRoot = $resolvedEngineRoot
-} elseif ($resolvedEngineRoot.EndsWith('\Engine', [System.StringComparison]::OrdinalIgnoreCase)) {
+} elseif ($resolvedEngineRoot.EndsWith('\Engine', [System.StringComparison]::OrdinalIgnoreCase) -and (Test-Path -LiteralPath (Join-Path $resolvedEngineRoot 'Source'))) {
     $installRoot = Split-Path $resolvedEngineRoot -Parent
 } else {
-    $installRoot = $resolvedEngineRoot
+    throw "Could not locate Engine\\Source under $resolvedEngineRoot"
 }
 
 $searchRoots = @(

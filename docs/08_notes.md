@@ -1,20 +1,19 @@
-# Notes
+# Repo Notes
 
-## Current Primary Learnings Doc
+## Primary Learnings Doc
 
 - `docs/07_jmap_static_mirror_learnings.md`
 
-This is the running note file for the jmap-generated mirror and related RoboQuest modding discoveries.
+That file is the running process log for the `jmap`-generated mirror and related RoboQuest modding discoveries.
 
-## Environment Assumptions
+## Repo Assumptions
 
-- RoboQuest target install:
-  - `E:\SteamLibrary\steamapps\common\RoboQuest`
-- Working engine install:
-  - `E:\Epic Games\UE_4.26`
+- users regenerate dumps and project outputs from their own RoboQuest install
+- users either let the scripts auto-detect UE 4.26 or pass `-EngineRoot`
+- generated outputs live under local `references/` and `projects/` paths and are not treated as committed source material
 
-## Important Practical Notes
+## Practical Notes
 
-- Public repo users are expected to regenerate local dumps and project outputs from their own RoboQuest install.
-- The local editor project can be regenerated and built with `tooling/setup/generate_editor_project.ps1`.
-- The included UE4SS runtime snapshot is a convenience baseline; the dump pipeline will redeploy it into the local game install when needed.
+- `tooling/setup/dump_modding_artifacts.ps1` redeploys the included UE4SS runtime before collecting dumps
+- `tooling/setup/generate_editor_project.ps1 -Clean` is the supported way to replace an existing generated project tree
+- `tooling/setup/restore_game_runtime_backup.ps1` restores the original runtime files that the dump step backs up on first run

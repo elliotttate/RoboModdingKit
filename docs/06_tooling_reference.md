@@ -31,6 +31,9 @@ Located at:
 - `tooling/setup/bootstrap_repo_workspace.ps1`
 - `tooling/setup/bootstrap_external_sources.ps1`
 - `tooling/setup/dump_modding_artifacts.ps1`
+- `tooling/setup/dump_aes_keys.py`
+- `tooling/setup/generate_editor_project.ps1`
+- `tooling/setup/restore_game_runtime_backup.ps1`
 - `tooling/setup/README.md`
 
 Use these to bootstrap a fresh clone, clone open-source dependencies, dump artifacts from a local RoboQuest install, and generate the local editor project.
@@ -56,6 +59,7 @@ Located in `tooling/external_sources` after running the bootstrap:
 - `UEVR`
 - `uevr-mcp`
 - `UE4GameProjectGenerator`
+- `sdkgenny`
 
 ## Why These Matter
 
@@ -68,7 +72,9 @@ Located in `tooling/external_sources` after running the bootstrap:
 - `kismet-analyzer`
   - Blueprint analysis
 - `dump_modding_artifacts.ps1`
-  - one-command collection of jmap dumps, UE4SS dumps, SDK output, and optional extras
+  - one-command collection of jmap dumps, AES candidates, UE4SS dumps, SDK output, and optional extras
+- `dump_aes_keys.py`
+  - clean-room AES candidate scan for the Shipping executable, with optional `repak` verification
 - `RE-UE4SS-v301`
   - UE4SS v3.0.1 source tree used for the RoboQuest patch work
 - `Suzie`
@@ -77,6 +83,8 @@ Located in `tooling/external_sources` after running the bootstrap:
   - useful for live introspection and runtime experiments
 - `UE4GameProjectGenerator`
   - additional project-generation reference material
+- `sdkgenny`
+  - optional rebuild source for `tooling/sdk_dump_tools_snapshot/bin/rq_sdkgenny_emit.exe`
 
 ## Direct Tool Paths
 
@@ -90,3 +98,4 @@ Located in `tooling/external_sources` after running the bootstrap:
 - The `tooling/bin` folder contains copied executables.
 - The `tooling/external_sources` folder is meant for local clones.
 - The RoboQuest-specific scripts are carried in `tooling/roboquest_scripts_snapshot`.
+- External-source refs are pinned in `tooling/setup/external_sources.json`.

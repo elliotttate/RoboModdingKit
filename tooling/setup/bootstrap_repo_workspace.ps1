@@ -1,9 +1,14 @@
 param(
-    [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent),
+    [string]$RepoRoot,
     [switch]$CloneExternalSources
 )
 
 $ErrorActionPreference = 'Stop'
+
+if (-not $RepoRoot) {
+    $RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+}
+$RepoRoot = [System.IO.Path]::GetFullPath($RepoRoot)
 
 $paths = @(
     (Join-Path $RepoRoot 'projects'),

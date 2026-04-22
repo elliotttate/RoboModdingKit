@@ -1,47 +1,35 @@
-# Portable GitHub Repo Plan
+# Portable Repo Notes
 
-The current local kit can be useful as-is on this machine, but a GitHub repo should be treated differently.
+This repository is intentionally structured as a builder/bootstrap repo rather than a full pre-expanded archive.
 
-## What Should Go In Git
+## What Belongs In Git
 
 - docs
-- manifests
-- PowerShell/bootstrap scripts
-- the copied RoboQuest helper script snapshot
+- manifests and metadata
+- setup/bootstrap scripts
+- RoboQuest-specific helper-script snapshots
 - small configuration files
-- optionally small open-source tool binaries if you want convenience
+- small redistributed tool/runtime binaries with attribution
 
-## What Should Not Be Assumed To Live In Git
+## What Stays Local
 
 - RoboQuest game files
-- extracted game content
-- full dump outputs
-- giant generated SDK trees
-- IDA databases
-- any local-only junction structure
+- extracted content
+- fresh dump outputs
+- generated Unreal projects
+- large SDK trees
+- IDA databases and personal reverse-engineering workspaces
 
-Those items are either too large, derived from the game install, or both.
+Those artifacts are either derived from a local game install, too large for a clean public repo, or both.
 
-## Recommended Fresh-Machine Flow
+## Expected Fresh-Machine Flow
 
-1. Clone the modding kit repo.
-2. Run `tooling/setup/bootstrap_external_sources.ps1`.
-3. Install UE 4.26 and ensure RoboQuest is locally installed.
+1. Clone the repo.
+2. Run `tooling/setup/bootstrap_repo_workspace.ps1 -CloneExternalSources`.
+3. Install UE 4.26 and make sure RoboQuest is installed locally.
 4. Run `tooling/setup/dump_modding_artifacts.ps1` against the local RoboQuest install.
 5. Run `tooling/setup/generate_editor_project.ps1` to build the local UE 4.26 project.
 
-## Existing Local Pipeline Reference
-
-The original reverse-workspace README already records the local pipeline stages and tool order:
-
-- dump reflection with `jmap`
-- extract assets with `retoc` and `repak`
-- run the IDA scripts
-- use UE4SS for UHT-compatible headers
-- build and open the generated 4.26 editor project
-
-That reference is useful source material for turning the kit into a reproducible public repo, but the outputs themselves should usually be local artifacts, not committed repo content.
-
 ## Practical Recommendation
 
-Treat the GitHub version as a builder/bootstrap repo, not as a full pre-expanded archive of all generated assets.
+Treat the repo as a reproducible workspace generator. The committed content should explain the pipeline and carry the small helper/runtime pieces; the large game-derived outputs should usually be regenerated locally.

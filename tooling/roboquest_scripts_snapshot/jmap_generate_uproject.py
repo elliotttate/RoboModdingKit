@@ -317,7 +317,11 @@ def ensure_directory_junction(link_path: Path, target_path: Path):
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
-    except Exception:
+    except Exception as exc:
+        print(
+            f"[warn] Falling back to copying {target_path} -> {link_path} because mklink /J failed: {exc}",
+            file=sys.stderr,
+        )
         copy_tree_if_present(target_path, link_path)
 
 

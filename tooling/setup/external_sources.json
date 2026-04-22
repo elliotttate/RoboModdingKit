@@ -2,40 +2,53 @@
   "repositories": [
     {
       "name": "jmap",
-      "url": "https://github.com/trumank/jmap.git"
+      "url": "https://github.com/trumank/jmap.git",
+      "ref": "2f2683102d44c45ad99dcfc1c80ac81380d37348"
     },
     {
       "name": "repak",
-      "url": "https://github.com/trumank/repak.git"
+      "url": "https://github.com/trumank/repak.git",
+      "ref": "355b5f62f51959c7cc6dd5a51708646ef483065d"
     },
     {
       "name": "retoc",
-      "url": "https://github.com/trumank/retoc.git"
+      "url": "https://github.com/trumank/retoc.git",
+      "ref": "d034ade1ae8117d4786eaf6b0418d4cf48474d7f"
     },
     {
       "name": "kismet-analyzer",
-      "url": "https://github.com/trumank/kismet-analyzer.git"
+      "url": "https://github.com/trumank/kismet-analyzer.git",
+      "ref": "e8982e99d628c92a43f2109c0f604c0d4061c6dd"
     },
     {
       "name": "RE-UE4SS-v301",
       "url": "https://github.com/UE4SS-RE/RE-UE4SS.git",
-      "ref": "v3.0.1"
+      "ref": "d935b5b23bac03b65c14ae38382b02007204cc2e"
     },
     {
       "name": "UEVR",
-      "url": "https://github.com/praydog/UEVR.git"
+      "url": "https://github.com/praydog/UEVR.git",
+      "ref": "6f66affc01cea22e4b1b5a47986e1ade80ccbd26"
     },
     {
       "name": "uevr-mcp",
-      "url": "https://github.com/elliotttate/uevr-mcp.git"
+      "url": "https://github.com/elliotttate/uevr-mcp.git",
+      "ref": "908c021cbf48cb2a52d3f17adcbf52d71c796139"
     },
     {
       "name": "Suzie",
-      "url": "https://github.com/trumank/Suzie.git"
+      "url": "https://github.com/trumank/Suzie.git",
+      "ref": "0d71f7535342c6653f041bb71327189eb2b3469e"
     },
     {
       "name": "UE4GameProjectGenerator",
-      "url": "https://github.com/Buckminsterfullerene02/UE4GameProjectGenerator.git"
+      "url": "https://github.com/Buckminsterfullerene02/UE4GameProjectGenerator.git",
+      "ref": "3d14fbd49a4f4e5dfe34073464a37169999dafb4"
+    },
+    {
+      "name": "sdkgenny",
+      "url": "https://github.com/cursey/sdkgenny.git",
+      "ref": "b08e17068e91cddd00c27b45eb2524a8a1836cfb"
     }
   ]
 }

@@ -21,6 +21,7 @@ We turn that CALL instruction (5 bytes `E8 xx xx xx xx`) into five NOP
 bytes (`90 90 90 90 90`). The error simply never gets recorded.
 """
 import json
+from pathlib import Path
 
 try:
     import ida_auto
@@ -34,6 +35,9 @@ try:
     import idc
 except ImportError as e:
     raise SystemExit(f"Must run inside IDA: {e}")
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+EXPECTED_INPUT_SHA256 = "8AC18FBFFC1EF96B0662D4A2D537B3F224C26D65CAABA7989A9404C566102B26"
 
 
 def log(msg: str) -> None:
@@ -117,9 +121,14 @@ def main() -> None:
                     "patch_length": 5,
                 })
 
-    out = "E:/RoboQuestReverse/ue4ss_patch/ftext_patch_plan_v2.json"
-    with open(out, "w", encoding="utf-8") as f:
-        json.dump({"patches": patches, "dll": "UE4SS.dll"}, f, indent=2)
+    out = REPO_ROOT / "runtime" / "UE4SS_patch_analysis" / "ftext_patch_plan_v2.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("w", encoding="utf-8") as f:
+        json.dump({
+            "dll": "UE4SS.dll",
+            "expected_input_sha256": EXPECTED_INPUT_SHA256,
+            "patches": patches,
+        }, f, indent=2)
     log(f"wrote {out} with {len(patches)} NOP patch(es)")
     idc.qexit(0)
 

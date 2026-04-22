@@ -1,9 +1,14 @@
 param(
-    [string]$DestinationRoot = (Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) 'tooling\external_sources'),
+    [string]$DestinationRoot,
     [switch]$UpdateExisting
 )
 
 $ErrorActionPreference = 'Stop'
+
+if (-not $DestinationRoot) {
+    $DestinationRoot = Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) 'tooling\external_sources'
+}
+$DestinationRoot = [System.IO.Path]::GetFullPath($DestinationRoot)
 
 $manifestPath = Join-Path $PSScriptRoot 'external_sources.json'
 $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
@@ -39,7 +44,7 @@ foreach ($repo in $manifest.repositories) {
         if ($LASTEXITCODE -ne 0) {
             throw "Failed to fetch tags for $repoPath"
         }
-        git -C $repoPath checkout $repo.ref
+        git -c advice.detachedHead=false -C $repoPath checkout $repo.ref
         if ($LASTEXITCODE -ne 0) {
             throw "Failed to checkout $($repo.ref) in $repoPath"
         }

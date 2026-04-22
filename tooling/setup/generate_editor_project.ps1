@@ -1,14 +1,23 @@
 param(
-    [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent),
+    [string]$RepoRoot,
     [string]$EngineRoot,
-    [string]$OutputRoot = (Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) 'projects\RoboQuest_jmap_426_local'),
+    [string]$OutputRoot,
     [string]$DumpPath,
+    [switch]$Clean,
+    [switch]$RefreshEngineReference,
     [switch]$GenerateProjectFiles,
     [switch]$Build
 )
 
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'resolve_ue426_root.ps1')
+
+if (-not $RepoRoot) {
+    $RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+}
+if (-not $OutputRoot) {
+    $OutputRoot = Join-Path $RepoRoot 'projects\RoboQuest_jmap_426_local'
+}
 
 function Invoke-Checked([string]$FilePath, [string[]]$Arguments) {
     & $FilePath @Arguments
@@ -17,8 +26,39 @@ function Invoke-Checked([string]$FilePath, [string[]]$Arguments) {
     }
 }
 
+function Resolve-PythonCommand() {
+    foreach ($candidate in @(
+        @{ FilePath = 'py'; PrefixArguments = @('-3') },
+        @{ FilePath = 'python'; PrefixArguments = @() },
+        @{ FilePath = 'python3'; PrefixArguments = @() }
+    )) {
+        try {
+            Get-Command $candidate.FilePath -ErrorAction Stop | Out-Null
+            return $candidate
+        } catch {
+        }
+    }
+
+    throw 'Python 3 was not found. Install Python or ensure py/python/python3 is on PATH.'
+}
+
+function Assert-SafeGeneratedOutputRoot([string]$Path, [string]$RepoRoot) {
+    $projectsRoot = [System.IO.Path]::GetFullPath((Join-Path $RepoRoot 'projects'))
+    $leaf = Split-Path $Path -Leaf
+    $pathRoot = [System.IO.Path]::GetPathRoot($Path)
+
+    if ($Path -eq $pathRoot -or $Path -eq $RepoRoot -or $Path -eq $projectsRoot) {
+        throw "Refusing to delete an unsafe output root: $Path"
+    }
+
+    if (-not ($leaf -like 'RoboQuest_jmap_*' -or (Test-Path -LiteralPath (Join-Path $Path 'RoboQuest.uproject')))) {
+        throw "Refusing to delete '$Path' without a generated-project marker. Use a RoboQuest_jmap_* output root or delete it manually."
+    }
+}
+
 $resolvedRepoRoot = (Resolve-Path -LiteralPath $RepoRoot).Path
 $resolvedEngineRoot = Resolve-UE426Root -PreferredPath $EngineRoot
+$pythonCommand = Resolve-PythonCommand
 $dumpCandidates = @(
     (Join-Path $resolvedRepoRoot 'references\dumps\RoboQuest.v2.jmap'),
     (Join-Path $resolvedRepoRoot 'references\dumps\RoboQuest.all.jmap'),
@@ -42,17 +82,27 @@ if (-not (Test-Path -LiteralPath $uhtDumpRoot)) {
 
 $resolvedOutputRoot = [System.IO.Path]::GetFullPath($OutputRoot)
 if (Test-Path -LiteralPath $resolvedOutputRoot) {
-    Remove-Item -LiteralPath $resolvedOutputRoot -Recurse -Force
+    $existingItems = @(Get-ChildItem -LiteralPath $resolvedOutputRoot -Force -ErrorAction SilentlyContinue)
+    if ($existingItems.Count -gt 0) {
+        if (-not $Clean) {
+            throw "Output root already exists and is not empty: $resolvedOutputRoot`nRe-run with -Clean to replace it."
+        }
+        Assert-SafeGeneratedOutputRoot -Path $resolvedOutputRoot -RepoRoot $resolvedRepoRoot
+        Remove-Item -LiteralPath $resolvedOutputRoot -Recurse -Force
+    }
 }
 
 $engineReferenceRoot = Join-Path $resolvedRepoRoot 'tooling\generated\engine_module_reference'
+if ($RefreshEngineReference -and (Test-Path -LiteralPath $engineReferenceRoot)) {
+    Remove-Item -LiteralPath $engineReferenceRoot -Recurse -Force
+}
 if (-not (Test-Path -LiteralPath $engineReferenceRoot)) {
-    Invoke-Checked 'powershell' @(
-        '-ExecutionPolicy', 'Bypass',
-        '-File', (Join-Path $PSScriptRoot 'materialize_engine_reference.ps1'),
+    & (Join-Path $PSScriptRoot 'materialize_engine_reference.ps1') `
         '-EngineRoot', $resolvedEngineRoot,
         '-DestinationRoot', $engineReferenceRoot
-    )
+    if ($LASTEXITCODE -ne 0) {
+        throw 'materialize_engine_reference.ps1 failed'
+    }
 }
 
 $configCandidates = @(
@@ -64,7 +114,6 @@ $configSource = $configCandidates | Where-Object { Test-Path -LiteralPath $_ } |
 
 $generatorScript = Join-Path $resolvedRepoRoot 'tooling\roboquest_scripts_snapshot\jmap_generate_uproject.py'
 $generatorArgs = @(
-    '-3',
     $generatorScript,
     $resolvedDumpPath,
     '--project-name', 'RoboQuest',
@@ -80,9 +129,11 @@ if ($configSource) {
     $generatorArgs += @('--copy-config-from', $configSource)
 }
 
-Invoke-Checked 'py' $generatorArgs
+Invoke-Checked $pythonCommand.FilePath (@($pythonCommand.PrefixArguments) + $generatorArgs)
 
 $uprojectPath = Join-Path $resolvedOutputRoot 'RoboQuest.uproject'
+New-Item -ItemType Directory -Path (Join-Path $resolvedOutputRoot 'Content') -Force | Out-Null
+
 if ($GenerateProjectFiles) {
     Invoke-Checked (Join-Path $resolvedEngineRoot 'Engine\Binaries\DotNET\UnrealBuildTool.exe') @(
         '-projectfiles',

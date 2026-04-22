@@ -14,7 +14,7 @@
 
 ```powershell
 & '.\tooling\setup\dump_modding_artifacts.ps1' `
-  -GameRoot 'E:\SteamLibrary\steamapps\common\RoboQuest' `
+  -GameRoot 'C:\Games\RoboQuest' `
   -LaunchForUht `
   -CollectExtrasIfPresent `
   -GeneratePakListing
@@ -27,12 +27,13 @@
 & '.\tooling\setup\generate_editor_project.ps1' -GenerateProjectFiles -Build
 ```
 
+If `projects/RoboQuest_jmap_426_local` already exists, rerun that command with `-Clean`.
+
 ## If You Want A Working UE4SS Runtime
 
 - Start in `runtime/UE4SS_working_runtime/Win64`
 - Main files:
   - `UE4SS.dll`
-  - `UE4SS.dll.bak_ftext_original`
   - `UE4SS-settings.ini`
   - `dwmapi.dll`
   - `Mods/`

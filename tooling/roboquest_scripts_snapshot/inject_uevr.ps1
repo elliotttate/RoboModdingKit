@@ -1,7 +1,7 @@
 # inject_uevr.ps1 — CreateRemoteThread + LoadLibraryA injector.
 #
 # Usage: .\inject_uevr.ps1 <target_exe_name_or_pid> <dll_path>
-# Example: .\inject_uevr.ps1 RoboQuest-Win64-Shipping E:\Github\UEVR\build\bin\uevr\UEVRBackend.dll
+# Example: .\inject_uevr.ps1 RoboQuest-Win64-Shipping C:\Path\To\UEVR\build\bin\uevr\UEVRBackend.dll
 #
 # Works by:
 #   1. Opening the target process with PROCESS_ALL_ACCESS.
@@ -29,7 +29,7 @@ if ($Target -match '^\d+$') {
     $proc = Get-Process -Id $pidTarget -ErrorAction Stop
 } else {
     $name = $Target -replace '\.exe$',''
-    $proc = Get-Process -Name $name -ErrorAction Stop | Select -First 1
+    $proc = Get-Process -Name $name -ErrorAction Stop | Select-Object -First 1
     if (-not $proc) { throw "No process named $Target" }
     $pidTarget = $proc.Id
 }

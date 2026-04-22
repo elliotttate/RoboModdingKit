@@ -1464,10 +1464,11 @@ def emit_class(path: str, obj: dict, objects: dict, out_dir: Path, src_dir: Path
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("jmap", help="input .jmap JSON")
-    ap.add_argument("--module", default="RoboQuest",
+    ap.add_argument("--modules", default="RoboQuest",
                     help="Single UE module short name to emit, or comma-"
                          "separated list, or 'ALL' to emit every module that "
                          "is not in the engine/plugin blacklist.")
+    ap.add_argument("--module", dest="modules", help=argparse.SUPPRESS)
     ap.add_argument("--out-public", required=True,
                     help="directory to write .h files into")
     ap.add_argument("--out-private", required=True,
@@ -1482,7 +1483,7 @@ def main() -> int:
     objects: dict = data["objects"]
     configure_uht_dump(args.uht_dump_root)
 
-    if args.module == "ALL":
+    if args.modules == "ALL":
         # Enumerate every /Script/<Module>, drop known engine modules.
         discovered: set[str] = set()
         for p in objects:
@@ -1491,7 +1492,7 @@ def main() -> int:
                 discovered.add(m)
         modules = sorted(discovered)
     else:
-        modules = [m.strip() for m in args.module.split(",") if m.strip()]
+        modules = [m.strip() for m in args.modules.split(",") if m.strip()]
 
     out_pub = Path(args.out_public); out_pub.mkdir(parents=True, exist_ok=True)
     out_priv = Path(args.out_private); out_priv.mkdir(parents=True, exist_ok=True)
