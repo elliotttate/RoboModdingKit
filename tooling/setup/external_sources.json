@@ -1,0 +1,41 @@
+{
+  "repositories": [
+    {
+      "name": "jmap",
+      "url": "https://github.com/trumank/jmap.git"
+    },
+    {
+      "name": "repak",
+      "url": "https://github.com/trumank/repak.git"
+    },
+    {
+      "name": "retoc",
+      "url": "https://github.com/trumank/retoc.git"
+    },
+    {
+      "name": "kismet-analyzer",
+      "url": "https://github.com/trumank/kismet-analyzer.git"
+    },
+    {
+      "name": "RE-UE4SS-v301",
+      "url": "https://github.com/UE4SS-RE/RE-UE4SS.git",
+      "ref": "v3.0.1"
+    },
+    {
+      "name": "UEVR",
+      "url": "https://github.com/praydog/UEVR.git"
+    },
+    {
+      "name": "uevr-mcp",
+      "url": "https://github.com/elliotttate/uevr-mcp.git"
+    },
+    {
+      "name": "Suzie",
+      "url": "https://github.com/trumank/Suzie.git"
+    },
+    {
+      "name": "UE4GameProjectGenerator",
+      "url": "https://github.com/Buckminsterfullerene02/UE4GameProjectGenerator.git"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "patches": [
+    {
+      "description": "FText error emplace in sub_180354130",
+      "xref_ea": "0x180354364",
+      "is_fatal_ea": "0x180354376",
+      "file_offset": 3487606,
+      "old_byte": 1,
+      "new_byte": 0
+    },
+    {
+      "description": "FText error emplace in sub_1803543F0",
+      "xref_ea": "0x180354423",
+      "is_fatal_ea": "0x180354444",
+      "file_offset": 3487812,
+      "old_byte": 1,
+      "new_byte": 0
+    },
+    {
+      "description": "FText error emplace in sub_180357390",
+      "xref_ea": "0x1803573b8",
+      "is_fatal_ea": "0x1803573dc",
+      "file_offset": 3499996,
+      "old_byte": 1,
+      "new_byte": 0
+    },
+    {
+      "description": "FText error emplace in sub_180358BE0",
+      "xref_ea": "0x180358c07",
+      "is_fatal_ea": "0x180358c2b",
+      "file_offset": 3506219,
+      "old_byte": 1,
+      "new_byte": 0
+    }
+  ],
+  "dll": "UE4SS.dll"
+}
