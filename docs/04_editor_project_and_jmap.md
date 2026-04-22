@@ -52,6 +52,7 @@ If auto-detection fails:
 - picks the best available dump in `references/dumps`
 - uses `references/ue4ss/UHTHeaderDump`
 - uses copied config from `references/generated_project` when available
+- uses copied plugin descriptors from `references/generated_project/Plugins` when available, so project-owned plugin modules emit under `Plugins/` instead of being flattened into `Source/`
 - writes the local Unreal project to `projects/RoboQuest_jmap_426_local`
 - optionally runs UBT project-file generation and a full editor build
 

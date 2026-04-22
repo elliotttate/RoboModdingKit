@@ -42,6 +42,7 @@ Use this when you want to point the repo at a local RoboQuest install and collec
 - The script writes into `RoboQuest\Binaries\Win64` and backs up the first-run copies of `UE4SS.dll`, `UE4SS-settings.ini`, `dwmapi.dll`, and the existing `Mods` tree under `RoboModdingKit_backup`.
 - Use `tooling/setup/restore_game_runtime_backup.ps1` if you want to put those original runtime files and the backed-up `Mods` tree back.
 - `references/crypto/aes_candidates.json` ranks unique candidates by entropy and records which key, if any, was verified against a local pak via `repak`.
+- when `generated_project/Plugins` exists in the copied extras, the editor project generator can reuse those plugin descriptors to preserve project plugin layout more accurately.
 - The cleanest full run is:
   1. close RoboQuest
   2. run the script with `-LaunchForUht`

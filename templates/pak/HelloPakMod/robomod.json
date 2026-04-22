@@ -1,0 +1,7 @@
+{
+  "name": "HelloPakMod",
+  "type": "pak",
+  "stage_root": "stage",
+  "mount_point": "../../../",
+  "description": "Minimal sidecar pak sample that stages a marker file under RoboQuest/Content."
+}

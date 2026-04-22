@@ -1,0 +1,6 @@
+{
+  "name": "HelloRoboLogMod",
+  "type": "ue4ss",
+  "entry_script": "Scripts/main.lua",
+  "description": "Minimal UE4SS sample mod that writes a line to UE4SS.log at startup."
+}

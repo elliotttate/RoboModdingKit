@@ -45,6 +45,13 @@
 - `external_sources`
   - Local clone destination for open-source dependencies.
 
+## `templates/`
+
+- `ue4ss/HelloRoboLogMod`
+  - minimal log-writing UE4SS sample mod
+- `pak/HelloPakMod`
+  - minimal sidecar pak sample mod staging tree
+
 ## `docs/`
 
 - Top-level usage and workflow docs.

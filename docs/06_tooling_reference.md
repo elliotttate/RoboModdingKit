@@ -32,7 +32,11 @@ Located at:
 - `tooling/setup/bootstrap_external_sources.ps1`
 - `tooling/setup/dump_modding_artifacts.ps1`
 - `tooling/setup/dump_aes_keys.py`
+- `tooling/setup/doctor_moddingkit.ps1`
 - `tooling/setup/generate_editor_project.ps1`
+- `tooling/setup/package_mod.ps1`
+- `tooling/setup/install_mod.ps1`
+- `tooling/setup/uninstall_mod.ps1`
 - `tooling/setup/restore_game_runtime_backup.ps1`
 - `tooling/setup/README.md`
 
@@ -75,6 +79,14 @@ Located in `tooling/external_sources` after running the bootstrap:
   - one-command collection of jmap dumps, AES candidates, UE4SS dumps, SDK output, and optional extras
 - `dump_aes_keys.py`
   - AES candidate scan for the Shipping executable, with optional `repak` verification
+- `doctor_moddingkit.ps1`
+  - preflight check for the engine, game install, key tool binaries, templates, and generated outputs; accepts `-GeneratedProjectRoot` when you keep the generated project outside the default local path
+- `package_mod.ps1`
+  - packages a UE4SS template into a `.zip` or a staged content tree into a RoboQuest-compatible sidecar `.pak`; pak packaging reads `mount_point`, `version`, `compression`, and `path_hash_seed` from `robomod.json` unless overridden
+- `install_mod.ps1`
+  - installs a packaged `.pak`, a packaged UE4SS `.zip`, or a loose UE4SS mod directory into the game
+- `uninstall_mod.ps1`
+  - removes installed sample or custom mods from the game install
 - `RE-UE4SS-v301`
   - UE4SS v3.0.1 source tree used for the RoboQuest patch work
 - `Suzie`

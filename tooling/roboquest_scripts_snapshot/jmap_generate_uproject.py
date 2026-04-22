@@ -8,6 +8,7 @@ import re
 import shutil
 import subprocess
 import sys
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
@@ -292,18 +293,62 @@ def collect_enabled_plugins(
     objects: dict[str, dict],
     plugin_module_owners: dict[str, str],
     skipped_engine_plugin_modules: list[dict[str, str]],
+    project_plugin_modules: dict[str, str] | None = None,
 ) -> list[str]:
     plugin_names = {
         Path(skipped["owner"]).stem
         for skipped in skipped_engine_plugin_modules
     }
+    if project_plugin_modules:
+        plugin_names.update(project_plugin_modules[module] for module in modules if module in project_plugin_modules)
     for module in modules:
         for path in collect_module_paths(objects, module):
             for dep in iter_script_modules(objects[path]):
                 owner = plugin_module_owners.get(dep)
                 if owner:
                     plugin_names.add(Path(owner).stem)
+                elif project_plugin_modules and dep in project_plugin_modules:
+                    plugin_names.add(project_plugin_modules[dep])
     return sorted(plugin_names)
+
+
+def load_json_relaxed(path: Path) -> dict[str, Any] | None:
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except OSError:
+        return None
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        try:
+            relaxed = re.sub(r",(\s*[}\]])", r"\1", raw)
+            return json.loads(relaxed)
+        except json.JSONDecodeError:
+            return None
+
+
+def collect_project_plugin_modules(plugin_root: Path | None) -> tuple[dict[str, str], dict[str, dict[str, Any]]]:
+    if plugin_root is None or not plugin_root.exists():
+        return {}, {}
+
+    module_to_plugin: dict[str, str] = {}
+    plugin_payloads: dict[str, dict[str, Any]] = {}
+    for plugin_file in plugin_root.rglob("*.uplugin"):
+        payload = load_json_relaxed(plugin_file)
+        if not isinstance(payload, dict):
+            continue
+        plugin_name = plugin_file.stem
+        plugin_payloads[plugin_name] = payload
+        for module in payload.get("Modules", []):
+            module_name = module.get("Name")
+            if module_name:
+                module_to_plugin[module_name] = plugin_name
+    return module_to_plugin, plugin_payloads
+
+
+def project_root_expression(project_root_hops: int) -> str:
+    segments = ", ".join('".."' for _ in range(project_root_hops))
+    return f"Path.GetFullPath(Path.Combine(ModuleDirectory, {segments}))"
 
 
 def ensure_directory_junction(link_path: Path, target_path: Path):
@@ -356,12 +401,15 @@ def write_build_cs(
     dependencies: list[str],
     reference_include_modules: list[str] | None = None,
     compile_shim_modules: list[str] | None = None,
+    project_root_hops: int = 2,
 ):
     deps = ",\n            ".join(f'"{dep}"' for dep in dependencies)
     include_block = ""
+    project_root_block = ""
+    project_root_expr = project_root_expression(project_root_hops)
     if compile_shim_modules:
         shim_entries = ",\n            ".join(
-            f'Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "_compile_shims", "{dep}", "Public"))'
+            f'Path.GetFullPath(Path.Combine(ProjectRoot, "_compile_shims", "{dep}", "Public"))'
             for dep in sorted(compile_shim_modules)
         )
         include_block += (
@@ -372,7 +420,7 @@ def write_build_cs(
         )
     if reference_include_modules:
         include_entries = ",\n            ".join(
-            f'Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "_engine_module_reference", "{dep}", "Public"))'
+            f'Path.GetFullPath(Path.Combine(ProjectRoot, "_engine_module_reference", "{dep}", "Public"))'
             for dep in sorted(reference_include_modules)
             if dep not in REFERENCE_INCLUDE_EXCLUDE_MODULES
         )
@@ -383,6 +431,8 @@ def write_build_cs(
                 f"            {include_entries}\n"
                 "        });\n"
             )
+    if include_block:
+        project_root_block = f"        var ProjectRoot = {project_root_expr};\n\n"
     text = (
         "using UnrealBuildTool;\n"
         "using System.IO;\n\n"
@@ -391,6 +441,7 @@ def write_build_cs(
         "        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;\n"
         "        bLegacyPublicIncludePaths = false;\n"
         "        ShadowVariableWarningLevel = WarningLevel.Warning;\n\n"
+        f"{project_root_block}"
         "        PublicDependencyModuleNames.AddRange(new string[] {\n"
         f"            {deps}\n"
         "        });\n"
@@ -465,6 +516,80 @@ def write_uproject(
         ],
         "Plugins": [{"Name": plugin, "Enabled": True} for plugin in plugins],
     }
+    path.write_text(json.dumps(payload, indent=4) + "\n", encoding="utf-8")
+
+
+def collect_plugin_dependencies(
+    plugin_name: str,
+    modules: list[str],
+    module_dependencies: dict[str, list[str]],
+    plugin_module_owners: dict[str, str],
+    project_plugin_modules: dict[str, str],
+) -> list[str]:
+    plugin_names: set[str] = set()
+    for module in modules:
+        for dep in module_dependencies.get(module, []):
+            owner = plugin_module_owners.get(dep)
+            if owner:
+                plugin_names.add(Path(owner).stem)
+                continue
+            project_plugin = project_plugin_modules.get(dep)
+            if project_plugin and project_plugin != plugin_name:
+                plugin_names.add(project_plugin)
+    return sorted(plugin_names)
+
+
+def write_uplugin(
+    path: Path,
+    plugin_name: str,
+    modules: list[str],
+    template_payload: dict[str, Any] | None = None,
+    plugin_dependencies: list[str] | None = None,
+):
+    payload = deepcopy(template_payload) if template_payload else {}
+    payload.setdefault("FileVersion", 3)
+    payload.setdefault("Version", 1)
+    payload.setdefault("VersionName", "1.0")
+    payload.setdefault("FriendlyName", plugin_name)
+    payload.setdefault("Description", f"Generated project plugin for {plugin_name}.")
+    payload.setdefault("Category", "Generated")
+    payload.setdefault("EnabledByDefault", True)
+    payload.setdefault("CanContainContent", False)
+    payload.setdefault("IsBetaVersion", False)
+    payload.setdefault("Installed", False)
+
+    template_modules = {
+        module_entry.get("Name"): module_entry
+        for module_entry in payload.get("Modules", [])
+        if isinstance(module_entry, dict) and module_entry.get("Name")
+    }
+    payload["Modules"] = [
+        deepcopy(template_modules.get(module_name, {
+            "Name": module_name,
+            "Type": "Runtime",
+            "LoadingPhase": "Default",
+        }))
+        for module_name in modules
+    ]
+
+    existing_plugin_entries = {
+        entry.get("Name"): entry
+        for entry in payload.get("Plugins", [])
+        if isinstance(entry, dict) and entry.get("Name")
+    }
+    if plugin_dependencies:
+        payload["Plugins"] = [
+            deepcopy(existing_plugin_entries.get(dep, {
+                "Name": dep,
+                "Enabled": True,
+            }))
+            for dep in plugin_dependencies
+        ]
+    elif "Plugins" in payload:
+        payload["Plugins"] = [
+            deepcopy(entry)
+            for _, entry in sorted(existing_plugin_entries.items())
+        ]
     path.write_text(json.dumps(payload, indent=4) + "\n", encoding="utf-8")
 
 
@@ -560,6 +685,7 @@ def main() -> int:
     parser.add_argument("--engine-reference-root", help="Optional flat engine module reference tree used for missing 4.26-style public headers")
     parser.add_argument("--copy-config-from", help="Copy Config/ from an existing project")
     parser.add_argument("--uht-dump-root", help="Optional UE4SS UHTHeaderDump root used for name/header overrides")
+    parser.add_argument("--project-plugin-root", help="Optional generated_project Plugins/ root used to preserve project plugin layout")
     args = parser.parse_args()
 
     tool_dir = Path(__file__).resolve().parent
@@ -570,6 +696,7 @@ def main() -> int:
     jmap_path = Path(args.jmap).resolve()
     out_dir = Path(args.out_dir).resolve()
     source_root = out_dir / "Source"
+    plugins_root = out_dir / "Plugins"
     config_root = out_dir / "Config"
 
     with jmap_path.open("r", encoding="utf-8") as handle:
@@ -602,6 +729,7 @@ def main() -> int:
 
     out_dir.mkdir(parents=True, exist_ok=True)
     source_root.mkdir(parents=True, exist_ok=True)
+    plugins_root.mkdir(parents=True, exist_ok=True)
     config_root.mkdir(parents=True, exist_ok=True)
 
     engine_reference_modules: set[str] = set()
@@ -617,31 +745,79 @@ def main() -> int:
     if args.copy_config_from:
         copy_tree_if_present(Path(args.copy_config_from).resolve(), config_root)
 
+    project_plugin_modules, project_plugin_payloads = collect_project_plugin_modules(
+        Path(args.project_plugin_root).resolve() if args.project_plugin_root else None
+    )
+    source_modules = [module for module in modules if module not in project_plugin_modules]
+    plugin_modules_by_plugin: dict[str, list[str]] = {}
+    for module in modules:
+        plugin_name = project_plugin_modules.get(module)
+        if plugin_name:
+            plugin_modules_by_plugin.setdefault(plugin_name, []).append(module)
+
     enabled_plugins = collect_enabled_plugins(
         modules,
         objects,
         plugin_module_owners,
         skipped_engine_plugin_modules,
+        project_plugin_modules,
     )
     write_uproject(
         out_dir / f"{args.project_name}.uproject",
         args.project_name,
-        modules,
+        source_modules,
         args.engine_association,
         enabled_plugins,
     )
-    write_target_cs(source_root / f"{args.project_name}.Target.cs", args.project_name, "Game", modules)
-    write_target_cs(source_root / f"{args.project_name}Editor.Target.cs", args.project_name, "Editor", modules)
+    write_target_cs(source_root / f"{args.project_name}.Target.cs", args.project_name, "Game", source_modules)
+    write_target_cs(source_root / f"{args.project_name}Editor.Target.cs", args.project_name, "Editor", source_modules)
 
     for skipped in skipped_engine_plugin_modules:
         print(f"[skip] {skipped['name']}: provided by engine plugin {skipped['owner']}")
 
     skipped_collision_types: list[dict[str, str]] = []
-    summary: list[tuple[str, int, list[str]]] = []
+    module_dependencies: dict[str, list[str]] = {
+        module: infer_dependencies(
+            module,
+            collect_module_paths(objects, module),
+            objects,
+            generated_modules,
+            engine_modules,
+            set(plugin_module_owners),
+        )
+        for module in modules
+    }
+    for plugin_name, plugin_modules in sorted(plugin_modules_by_plugin.items()):
+        plugin_root = plugins_root / plugin_name
+        plugin_root.mkdir(parents=True, exist_ok=True)
+        write_uplugin(
+            plugin_root / f"{plugin_name}.uplugin",
+            plugin_name,
+            plugin_modules,
+            project_plugin_payloads.get(plugin_name),
+            collect_plugin_dependencies(
+                plugin_name,
+                plugin_modules,
+                module_dependencies,
+                plugin_module_owners,
+                project_plugin_modules,
+            ),
+        )
+
+    summary: list[tuple[str, int, list[str], str]] = []
     for module in modules:
         module_paths = collect_module_paths(objects, module)
-        public_dir = source_root / module / "Public"
-        private_dir = source_root / module / "Private"
+        plugin_name = project_plugin_modules.get(module)
+        if plugin_name:
+            module_root = plugins_root / plugin_name / "Source" / module
+            project_root_hops = 4
+            layout = f"plugin:{plugin_name}"
+        else:
+            module_root = source_root / module
+            project_root_hops = 2
+            layout = "source"
+        public_dir = module_root / "Public"
+        private_dir = module_root / "Private"
         public_dir.mkdir(parents=True, exist_ok=True)
         private_dir.mkdir(parents=True, exist_ok=True)
         copy_uht_dump_delegate_headers(uht_dump_root, module, public_dir, uht_helpers)
@@ -673,34 +849,33 @@ def main() -> int:
                 uht_helpers.emit_class(path, obj, objects, public_dir, private_dir, source=str(jmap_path))
                 emitted += 1
 
-        dependencies = infer_dependencies(
-            module,
-            module_paths,
-            objects,
-            generated_modules,
-            engine_modules,
-            set(plugin_module_owners),
-        )
+        dependencies = module_dependencies[module]
         write_build_cs(
-            source_root / module / f"{module}.Build.cs",
+            module_root / f"{module}.Build.cs",
             module,
             dependencies,
             [dep for dep in dependencies if dep in engine_reference_modules],
             [dep for dep in dependencies if dep in compile_shim_modules],
+            project_root_hops=project_root_hops,
         )
-        summary.append((module, emitted, dependencies))
-        print(f"[emit] {module}: {emitted} types, {len(dependencies)} deps")
+        summary.append((module, emitted, dependencies, layout))
+        print(f"[emit] {module}: {emitted} types, {len(dependencies)} deps, {layout}")
 
     summary_path = out_dir / "jmap_generation_summary.json"
     summary_payload = {
         "jmap": str(jmap_path),
         "project_name": args.project_name,
         "root_module": args.root_module,
+        "source_modules": source_modules,
+        "project_plugins": [
+            {"name": plugin_name, "modules": modules}
+            for plugin_name, modules in sorted(plugin_modules_by_plugin.items())
+        ],
         "skipped_engine_plugin_modules": skipped_engine_plugin_modules,
         "skipped_collision_types": skipped_collision_types,
         "modules": [
-            {"name": module, "emitted_types": emitted, "dependencies": deps}
-            for module, emitted, deps in summary
+            {"name": module, "emitted_types": emitted, "dependencies": deps, "layout": layout}
+            for module, emitted, deps, layout in summary
         ],
     }
     summary_path.write_text(json.dumps(summary_payload, indent=2) + "\n", encoding="utf-8")

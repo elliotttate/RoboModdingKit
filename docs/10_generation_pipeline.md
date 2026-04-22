@@ -84,3 +84,4 @@ Use the UE 4.26 commands described in:
 - check the generated project under `projects/RoboQuest_jmap_426_local`
 - review `references/dump_summary.json`
 - review build logs in the generated project root
+- use `docs/12_first_mods.md` to verify that both the runtime and sidecar pak paths work on your machine

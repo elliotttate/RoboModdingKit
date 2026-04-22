@@ -6,6 +6,7 @@ It includes:
 
 - a working UE4SS v3.0.1 RoboQuest runtime patch set
 - RoboQuest-specific generator and helper scripts
+- tested sample mod templates for UE4SS and sidecar `.pak` workflows
 - an end-to-end dump script that can point at a local RoboQuest install, recover AES candidates, and collect the useful modding artifacts
 - a minimal SDK-generation tool snapshot
 - small ready-to-run tool binaries
@@ -19,10 +20,12 @@ It does not commit RoboQuest-derived dump trees, extracted assets, generated Unr
 
 1. Read `docs/01_quick_start.md`.
 2. Run `tooling/setup/bootstrap_repo_workspace.ps1 -CloneExternalSources`.
-3. Run `tooling/setup/dump_modding_artifacts.ps1 -GameRoot '<your RoboQuest install root>' -LaunchForUht`.
-4. Read `docs/10_generation_pipeline.md`.
-5. Generate your local `projects/` outputs from the dumped data.
-6. Read `THIRD_PARTY_NOTICES.md` before redistributing any of the bundled binaries.
+3. Run `tooling/setup/doctor_moddingkit.ps1 -GameRoot '<your RoboQuest install root>'`.
+4. Run `tooling/setup/dump_modding_artifacts.ps1 -GameRoot '<your RoboQuest install root>' -LaunchForUht`.
+5. Read `docs/10_generation_pipeline.md`.
+6. Generate your local `projects/` outputs from the dumped data.
+7. Read `docs/12_first_mods.md`.
+8. Read `THIRD_PARTY_NOTICES.md` before redistributing any of the bundled binaries.
 
 The setup scripts auto-detect UE 4.26 from common install paths, `UE426_ROOT`, and the Windows registry. Users only need to pass `-EngineRoot` when that auto-detection fails.
 
@@ -32,6 +35,8 @@ The setup scripts auto-detect UE 4.26 from common install paths, `UE426_ROOT`, a
   - Working UE4SS runtime files, release zips, and patch-analysis artifacts.
 - `tooling/`
   - Tool binaries, RoboQuest helper script snapshot, SDK-generation snapshot, and setup scripts.
+- `templates/`
+  - tested starter mods and staging trees for first-run mod creation.
 - `docs/`
   - Workflow docs, generation notes, and mirror learnings.
 - `projects/`
@@ -52,8 +57,17 @@ The setup scripts auto-detect UE 4.26 from common install paths, `UE426_ROOT`, a
   - `tooling/roboquest_scripts_snapshot/jmap_to_uht.py`
 - Dump pipeline:
   - `tooling/setup/dump_modding_artifacts.ps1`
+- Mod doctor:
+  - `tooling/setup/doctor_moddingkit.ps1`
+- Mod packaging/install:
+  - `tooling/setup/package_mod.ps1`
+  - `tooling/setup/install_mod.ps1`
+  - `tooling/setup/uninstall_mod.ps1`
 - AES candidate scan:
   - `tooling/setup/dump_aes_keys.py`
+- Sample mods:
+  - `templates/ue4ss/HelloRoboLogMod`
+  - `templates/pak/HelloPakMod`
 - SDK generation snapshot:
   - `tooling/sdk_dump_tools_snapshot/`
 - Workspace bootstrap:

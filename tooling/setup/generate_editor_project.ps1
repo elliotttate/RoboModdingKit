@@ -111,6 +111,12 @@ $configCandidates = @(
     (Join-Path $resolvedRepoRoot 'references\generated_project\Config')
 )
 $configSource = $configCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+$projectPluginRootCandidates = @(
+    (Join-Path $resolvedRepoRoot 'references\generated_project\P\RoboQuest\Plugins'),
+    (Join-Path $resolvedRepoRoot 'references\generated_project\RoboQuest\Plugins'),
+    (Join-Path $resolvedRepoRoot 'references\generated_project\Plugins')
+)
+$projectPluginRoot = $projectPluginRootCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
 
 $generatorScript = Join-Path $resolvedRepoRoot 'tooling\roboquest_scripts_snapshot\jmap_generate_uproject.py'
 $generatorArgs = @(
@@ -127,6 +133,9 @@ $generatorArgs = @(
 )
 if ($configSource) {
     $generatorArgs += @('--copy-config-from', $configSource)
+}
+if ($projectPluginRoot) {
+    $generatorArgs += @('--project-plugin-root', $projectPluginRoot)
 }
 
 Invoke-Checked $pythonCommand.FilePath (@($pythonCommand.PrefixArguments) + $generatorArgs)
