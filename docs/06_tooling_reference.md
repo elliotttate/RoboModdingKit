@@ -74,7 +74,7 @@ Located in `tooling/external_sources` after running the bootstrap:
 - `dump_modding_artifacts.ps1`
   - one-command collection of jmap dumps, AES candidates, UE4SS dumps, SDK output, and optional extras
 - `dump_aes_keys.py`
-  - clean-room AES candidate scan for the Shipping executable, with optional `repak` verification
+  - AES candidate scan for the Shipping executable, with optional `repak` verification
 - `RE-UE4SS-v301`
   - UE4SS v3.0.1 source tree used for the RoboQuest patch work
 - `Suzie`
