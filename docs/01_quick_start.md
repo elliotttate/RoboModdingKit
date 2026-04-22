@@ -36,6 +36,8 @@
 
 If `projects/RoboQuest_jmap_426_local` already exists, rerun that command with `-Clean`.
 
+That wrapper installs the bundled Suzie plugin by default and copies `RoboQuest.jmap` to `Content/DynamicClasses` inside the generated project. For that workflow, read `docs/14_suzie_dynamic_classes.md`.
+
 8. Read `docs/12_first_mods.md` and try one of the included sample mods.
 
 ## If You Want A Working UE4SS Runtime
@@ -47,7 +49,7 @@ If `projects/RoboQuest_jmap_426_local` already exists, rerun that command with `
   - `dwmapi.dll`
   - `Mods/`
 
-This is the current known-good runtime setup used against RoboQuest. The `UHTHeaderDump` is not committed; generate it locally with the included `UHTDumper` mod or the dump script.
+This is the current known-good runtime setup used against RoboQuest. The `UHTHeaderDump` is not committed; generate it locally with the dump script, or temporarily enable `UHTDumper` when you specifically want a UE4SS header/object dump.
 
 ## If You Want To Rebuild The Editor Project
 
@@ -78,5 +80,6 @@ This is the current known-good runtime setup used against RoboQuest. The `UHTHea
 8. `docs/04_editor_project_and_jmap.md`
 9. `docs/05_dumps_sdk_assets.md`
 10. `docs/06_tooling_reference.md`
-11. `docs/13_troubleshooting.md`
-12. `docs/07_jmap_static_mirror_learnings.md`
+11. `docs/14_suzie_dynamic_classes.md`
+12. `docs/13_troubleshooting.md`
+13. `docs/07_jmap_static_mirror_learnings.md`

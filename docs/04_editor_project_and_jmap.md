@@ -36,6 +36,18 @@ Generate and build in one pass:
 & '.\tooling\setup\generate_editor_project.ps1' -GenerateProjectFiles -Build
 ```
 
+Generate, build, and include the bundled Suzie plugin plus `Content/DynamicClasses/RoboQuest.jmap`:
+
+```powershell
+& '.\tooling\setup\generate_editor_project.ps1' -GenerateProjectFiles -Build
+```
+
+Skip Suzie installation if you only want the static mirror:
+
+```powershell
+& '.\tooling\setup\generate_editor_project.ps1' -SkipSuzie -GenerateProjectFiles -Build
+```
+
 If auto-detection fails:
 
 ```powershell
@@ -54,6 +66,8 @@ If auto-detection fails:
 - uses copied config from `references/generated_project` when available
 - uses copied plugin descriptors from `references/generated_project/Plugins` when available, so project-owned plugin modules emit under `Plugins/` instead of being flattened into `Source/`
 - writes the local Unreal project to `projects/RoboQuest_jmap_426_local`
+- installs the bundled `templates/plugins/Suzie` plugin unless `-SkipSuzie` is passed
+- copies a local RoboQuest `.jmap` dump to `Content/DynamicClasses/RoboQuest.jmap` for the Suzie workflow
 - optionally runs UBT project-file generation and a full editor build
 
 ## Manual Script Entry Points
@@ -75,3 +89,7 @@ The current notes file is:
 - `docs/07_jmap_static_mirror_learnings.md`
 
 That document records the major generator fixes, include canonicalization rules, and 4.26-specific build/editor findings.
+
+For the dynamic-class path, see:
+
+- `docs/14_suzie_dynamic_classes.md`

@@ -7,7 +7,7 @@ LineTraceMod : 0
 BPModLoaderMod : 1
 BPML_GenericFunctions : 1
 jsbLuaProfilerMod : 0
-UHTDumper : 1
+UHTDumper : 0
 
 
 

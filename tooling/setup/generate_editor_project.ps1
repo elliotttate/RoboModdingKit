@@ -4,6 +4,7 @@ param(
     [string]$OutputRoot,
     [string]$DumpPath,
     [switch]$Clean,
+    [switch]$SkipSuzie,
     [switch]$RefreshEngineReference,
     [switch]$GenerateProjectFiles,
     [switch]$Build
@@ -142,6 +143,25 @@ Invoke-Checked $pythonCommand.FilePath (@($pythonCommand.PrefixArguments) + $gen
 
 $uprojectPath = Join-Path $resolvedOutputRoot 'RoboQuest.uproject'
 New-Item -ItemType Directory -Path (Join-Path $resolvedOutputRoot 'Content') -Force | Out-Null
+
+if (-not $SkipSuzie) {
+    $suzieDumpCandidates = @(
+        (Join-Path $resolvedRepoRoot 'references\dumps\RoboQuest.jmap'),
+        $resolvedDumpPath
+    ) | Select-Object -Unique
+    $suzieDumpPath = $suzieDumpCandidates | Where-Object { $_ -and (Test-Path -LiteralPath $_) } | Select-Object -First 1
+
+    $installSuzieScript = Join-Path $PSScriptRoot 'install_suzie.ps1'
+    $installSuzieArgs = @(
+        '-RepoRoot', $resolvedRepoRoot,
+        '-ProjectRoot', $resolvedOutputRoot
+    )
+    if ($suzieDumpPath) {
+        $installSuzieArgs += @('-DumpPath', $suzieDumpPath)
+    }
+    $installSuzieInvokeArgs = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $installSuzieScript) + $installSuzieArgs
+    Invoke-Checked 'powershell' $installSuzieInvokeArgs
+}
 
 if ($GenerateProjectFiles) {
     Invoke-Checked (Join-Path $resolvedEngineRoot 'Engine\Binaries\DotNET\UnrealBuildTool.exe') @(

@@ -1,0 +1,7 @@
+{
+  "name": "PlayableClassMenuSample",
+  "type": "pak",
+  "stage_root": "stage",
+  "mount_point": "../../../",
+  "description": "Starter sidecar pak scaffold for adding new player classes and menu entries."
+}

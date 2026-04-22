@@ -55,6 +55,15 @@ This repo contains original scripts/docs plus a small set of redistributed third
 - Upstream license/terms: see the upstream `UEVR` repository `LICENSE` file (`Copyright (c) 2022-2025 praydog`, `All rights reserved.`)
 - SHA-256: `CE596412BEFA68C30B7F88F65BEB77D9BDAD55E9B96A276A5A9CF690C63F24BB`
 
+## Redistributed Source Snapshots
+
+### `templates/plugins/Suzie`
+
+- Upstream: `https://github.com/trumank/Suzie`
+- Pinned source ref: `0d71f7535342c6653f041bb71327189eb2b3469e`
+- Upstream license: MIT
+- Notes: this repo carries a RoboQuest-tested UE 4.26 adaptation of the upstream Suzie plugin and ships it as source so users can build it locally inside the generated editor project
+
 ## Notes
 
 - The optional external-source clones bootstrapped under `tooling/external_sources` are not redistributed in this repo; see `tooling/setup/external_sources.json` for the pinned refs used during validation.

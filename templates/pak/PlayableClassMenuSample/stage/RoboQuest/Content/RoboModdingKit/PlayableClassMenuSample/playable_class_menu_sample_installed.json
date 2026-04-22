@@ -1,0 +1,13 @@
+{
+  "sample": "PlayableClassMenuSample",
+  "purpose": "Scaffold for adding new player classes and menu entries.",
+  "expected_authoring_targets": [
+    "/Game/Data/DT_PlayerClasses",
+    "/Game/Blueprint/HUD/Menus/HUD_MenuTitle",
+    "/Game/Mods/PlayableClassMenuSample"
+  ],
+  "notes": [
+    "This packaged sample only proves the mount path and stage layout.",
+    "Replace the placeholder files in the stage tree with cooked assets before expecting gameplay changes."
+  ]
+}

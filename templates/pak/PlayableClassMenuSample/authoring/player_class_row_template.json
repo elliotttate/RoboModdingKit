@@ -1,0 +1,48 @@
+{
+  "row_name": "RMK_MyNewClass",
+  "player_class_row": {
+    "Class": "/Game/Mods/PlayableClassMenuSample/PlayerClasses/RMK_MyNewClass/BP_RMK_MyNewClass.BP_RMK_MyNewClass_C",
+    "CustomFloatProperties": {
+      "MoveSpeedMultiplier": 1.0,
+      "DashCooldownMultiplier": 1.0
+    },
+    "bOverrideSkillActionProperties": false,
+    "SkillActionProperties": "Copy an existing FActionProperty literal only when the class skill action needs a custom override.",
+    "bOverrideBashActionProperties": false,
+    "BashActionProperties": "Copy an existing FActionProperty literal only when the bash action needs a custom override.",
+    "ClassWidget": "/Game/Mods/PlayableClassMenuSample/UI/WGT_RMK_MyNewClass.WGT_RMK_MyNewClass_C",
+    "SubCrosshairWidget": "/Game/Mods/PlayableClassMenuSample/UI/WGT_RMK_MyNewClassCrosshair.WGT_RMK_MyNewClassCrosshair_C",
+    "IconWidget": "/Game/Mods/PlayableClassMenuSample/UI/WGT_RMK_MyNewClassIcon.WGT_RMK_MyNewClassIcon_C",
+    "Name": "My New Class",
+    "passiveName": "Passive Name",
+    "PassiveDescription": "Describe the passive here.",
+    "StatDescription": "Describe the stat package here.",
+    "UnlockDescription": "Describe how the class unlocks here.",
+    "TextureFPV": "/Game/Mods/PlayableClassMenuSample/Textures/T_RMK_MyNewClass_FPV.T_RMK_MyNewClass_FPV",
+    "TextureTPV": "/Game/Mods/PlayableClassMenuSample/Textures/T_RMK_MyNewClass_TPV.T_RMK_MyNewClass_TPV",
+    "ClassIcon": "/Game/Mods/PlayableClassMenuSample/Textures/T_RMK_MyNewClass_Icon.T_RMK_MyNewClass_Icon",
+    "ClassUpgradeIcon": "/Game/Mods/PlayableClassMenuSample/Textures/T_RMK_MyNewClass_UpgradeIcon.T_RMK_MyNewClass_UpgradeIcon",
+    "ClassColor": "(R=0.10,G=0.65,B=0.95,A=1.0)",
+    "ClassUnlock": "/Game/Mods/PlayableClassMenuSample/Textures/T_RMK_MyNewClass_Unlock.T_RMK_MyNewClass_Unlock",
+    "ClassPreviewSelector": "/Game/Mods/PlayableClassMenuSample/Textures/T_RMK_MyNewClass_Preview.T_RMK_MyNewClass_Preview",
+    "ClassPreviewSelectorLocked": "/Game/Mods/PlayableClassMenuSample/Textures/T_RMK_MyNewClass_PreviewLocked.T_RMK_MyNewClass_PreviewLocked",
+    "ClassIconSelector": "/Game/Mods/PlayableClassMenuSample/Textures/T_RMK_MyNewClass_Selector.T_RMK_MyNewClass_Selector",
+    "ClassIconSelectorLocked": "/Game/Mods/PlayableClassMenuSample/Textures/T_RMK_MyNewClass_SelectorLocked.T_RMK_MyNewClass_SelectorLocked",
+    "ClassIconSelectorSelected": "/Game/Mods/PlayableClassMenuSample/Textures/T_RMK_MyNewClass_SelectorSelected.T_RMK_MyNewClass_SelectorSelected",
+    "bIsActive": true,
+    "ClassSkill": "/Game/Mods/PlayableClassMenuSample/Skills/BP_RMK_MyNewClassSkill.BP_RMK_MyNewClassSkill_C",
+    "BashSkill": "/Game/Mods/PlayableClassMenuSample/Skills/BP_RMK_MyNewClassBash.BP_RMK_MyNewClassBash_C",
+    "ClassWeapon": "/Game/Mods/PlayableClassMenuSample/Weapons/BP_RMK_MyNewClassWeapon.BP_RMK_MyNewClassWeapon_C",
+    "ItemBundles": [
+      "Copy existing FItemBundleRowHandle entries from a shipped class row or point them at new bundle rows."
+    ],
+    "UpgradePool": [
+      "Copy existing FItemRowHandle entries from a shipped class row or point them at new upgrade rows."
+    ],
+    "RecapIconVictory": "/Game/Mods/PlayableClassMenuSample/Sprites/SP_RMK_MyNewClass_Victory.SP_RMK_MyNewClass_Victory",
+    "RecapIconDefeat": "/Game/Mods/PlayableClassMenuSample/Sprites/SP_RMK_MyNewClass_Defeat.SP_RMK_MyNewClass_Defeat",
+    "FavoriteClassCard": "/Game/Mods/PlayableClassMenuSample/Sprites/SP_RMK_MyNewClass_Favorite.SP_RMK_MyNewClass_Favorite",
+    "PerkCompendiumCategory": "Use one of the shipped enum values unless you also extend the compendium flow.",
+    "bUnlockedInLG": true
+  }
+}

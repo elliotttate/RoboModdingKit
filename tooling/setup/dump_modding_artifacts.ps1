@@ -27,6 +27,29 @@ function Ensure-Directory([string]$Path) {
     New-Item -ItemType Directory -Path $Path -Force | Out-Null
 }
 
+function Set-ModEnabled([string]$ModsTxtPath, [string]$ModName, [bool]$Enabled) {
+    $lines = @()
+    if (Test-Path -LiteralPath $ModsTxtPath) {
+        $lines = Get-Content -LiteralPath $ModsTxtPath
+    }
+
+    $escapedName = [regex]::Escape($ModName)
+    $replacement = if ($Enabled) { "$ModName : 1" } else { "$ModName : 0" }
+    $updated = $false
+    for ($index = 0; $index -lt $lines.Count; $index++) {
+        if ($lines[$index] -match "^\s*$escapedName\s*:") {
+            $lines[$index] = $replacement
+            $updated = $true
+        }
+    }
+
+    if (-not $updated) {
+        $lines += $replacement
+    }
+
+    Set-Content -LiteralPath $ModsTxtPath -Value $lines
+}
+
 function Copy-Tree([string]$Source, [string]$Destination) {
     Ensure-Directory $Destination
     $null = & robocopy $Source $Destination /E /XJ /NFL /NDL /NJH /NJS /NP
@@ -214,6 +237,8 @@ $gameUhtRoot = Join-Path $binRoot 'UHTHeaderDump'
 $gameObjectDump = Join-Path $binRoot 'UE4SS_ObjectDump.txt'
 $gameUe4ssLog = Join-Path $binRoot 'UE4SS.log'
 $backupRoot = Join-Path $binRoot 'RoboModdingKit_backup'
+$modsTxtPath = Join-Path $binRoot 'Mods\mods.txt'
+$uhtDumperTemporarilyEnabled = $false
 
 Write-Step 'Deploying the included UE4SS runtime'
 Write-Warning "This step writes into $binRoot and may overwrite UE4SS.dll, UE4SS-settings.ini, dwmapi.dll, and files under Mods. Existing files are backed up on first run under $backupRoot."
@@ -222,6 +247,10 @@ Backup-IfExists (Join-Path $binRoot 'UE4SS-settings.ini') $backupRoot
 Backup-IfExists (Join-Path $binRoot 'dwmapi.dll') $backupRoot
 Backup-TreeIfExists (Join-Path $binRoot 'Mods') $backupRoot
 Copy-Tree $runtimeSource $binRoot
+if ($LaunchForUht) {
+    Set-ModEnabled -ModsTxtPath $modsTxtPath -ModName 'UHTDumper' -Enabled $true
+    $uhtDumperTemporarilyEnabled = $true
+}
 
 $gameProcess = Get-GameProcess -Name $GameProcessName -ExplicitProcessId $ProcessId
 
@@ -297,6 +326,11 @@ if ($LaunchForUht) {
 
     if (Test-Path -LiteralPath $gameUe4ssLog) {
         Copy-Item -LiteralPath $gameUe4ssLog -Destination (Join-Path $ue4ssRoot 'UE4SS.log') -Force
+    }
+
+    if ($uhtDumperTemporarilyEnabled) {
+        Set-ModEnabled -ModsTxtPath $modsTxtPath -ModName 'UHTDumper' -Enabled $false
+        $uhtDumperTemporarilyEnabled = $false
     }
 }
 

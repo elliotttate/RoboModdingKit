@@ -6,12 +6,14 @@ It includes:
 
 - a working UE4SS v3.0.1 RoboQuest runtime patch set
 - RoboQuest-specific generator and helper scripts
-- tested sample mod templates for UE4SS and sidecar `.pak` workflows
+- a bundled Suzie plugin snapshot patched for RoboQuest on UE 4.26
+- sample mod templates for UE4SS, sidecar `.pak` workflows, and larger content-mod scaffolds
 - an end-to-end dump script that can point at a local RoboQuest install, recover AES candidates, and collect the useful modding artifacts
 - a minimal SDK-generation tool snapshot
 - small ready-to-run tool binaries
 - setup/bootstrap scripts for a fresh machine
 - documentation for rebuilding the local workspace from a user's own RoboQuest install
+- documentation for the bundled dynamic `jmap` plugin workflow
 - the running notes from the `jmap` mirror work
 
 It does not commit RoboQuest-derived dump trees, extracted assets, generated Unreal projects, or IDA databases. Those are meant to be regenerated locally from a user's own game install.
@@ -59,6 +61,8 @@ The setup scripts auto-detect UE 4.26 from common install paths, `UE426_ROOT`, a
   - `tooling/setup/dump_modding_artifacts.ps1`
 - Mod doctor:
   - `tooling/setup/doctor_moddingkit.ps1`
+- Suzie installer:
+  - `tooling/setup/install_suzie.ps1`
 - Mod packaging/install:
   - `tooling/setup/package_mod.ps1`
   - `tooling/setup/install_mod.ps1`
@@ -68,6 +72,9 @@ The setup scripts auto-detect UE 4.26 from common install paths, `UE426_ROOT`, a
 - Sample mods:
   - `templates/ue4ss/HelloRoboLogMod`
   - `templates/pak/HelloPakMod`
+  - `templates/pak/PlayableClassMenuSample`
+- Bundled plugin template:
+  - `templates/plugins/Suzie`
 - SDK generation snapshot:
   - `tooling/sdk_dump_tools_snapshot/`
 - Workspace bootstrap:
@@ -75,6 +82,8 @@ The setup scripts auto-detect UE 4.26 from common install paths, `UE426_ROOT`, a
   - `tooling/setup/bootstrap_external_sources.ps1`
 - Current learnings:
   - `docs/07_jmap_static_mirror_learnings.md`
+- Dynamic class workflow:
+  - `docs/14_suzie_dynamic_classes.md`
 - Repo/legal metadata:
   - `LICENSE`
   - `CONTRIBUTING.md`
@@ -95,6 +104,7 @@ This repo is intended to help RoboQuest modders:
 - patch and deploy UE4SS
 - regenerate local dump/reference artifacts
 - rebuild the `jmap`-generated UE 4.26 editor project
+- load the RoboQuest dump dynamically through the bundled Suzie plugin
 - inspect the current generator logic and notes
 
 It is a builder/bootstrap repo, not a redistributable RoboQuest SDK.

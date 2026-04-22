@@ -28,7 +28,7 @@ The doctor script will catch all three.
 Check:
 
 - the included runtime was deployed to `RoboQuest\Binaries\Win64`
-- `UHTDumper` is enabled in `Mods\mods.txt`
+- `UHTDumper` is enabled in `Mods\mods.txt` for that dump run
 - RoboQuest was launched through `dump_modding_artifacts.ps1 -LaunchForUht`
 
 If RoboQuest stays open after `Calling exit()` appears in `UE4SS.log`, the dump script now force-terminates the launched process after the dump finishes.
@@ -61,6 +61,28 @@ Check:
 - `references\dump_summary.json`
 
 The current generator is plugin-aware when `references/generated_project/Plugins` is available, so make sure `dump_modding_artifacts.ps1 -CollectExtrasIfPresent` has been run.
+
+## The Editor Opens But Suzie Does Not Process The Dump
+
+Check:
+
+- `projects\RoboQuest_jmap_426_local\Plugins\Suzie`
+- `projects\RoboQuest_jmap_426_local\Content\DynamicClasses\RoboQuest.jmap`
+- `projects\RoboQuest_jmap_426_local\RoboQuest.uproject`
+
+The log should contain:
+
+- `LogSuzie: Display: Suzie plugin starting`
+- `LogSuzie: Display: Found 1 JSON class definition files`
+- `LogSuzie: Display: Processing JSON class definition: RoboQuest.jmap`
+- `LogSuzie: Display: Finished processing 22342 reflected objects from dump`
+
+If the plugin or dump is missing, rerun:
+
+```powershell
+& '.\tooling\setup\install_suzie.ps1' `
+  -ProjectRoot '.\projects\RoboQuest_jmap_426_local'
+```
 
 ## A Sample Mod Did Not Install
 

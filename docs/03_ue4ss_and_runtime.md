@@ -39,7 +39,7 @@ Included for reference:
 
 ## UHT Dump
 
-The UE4SS UHT dump is not committed in this public repo. Generate it locally by deploying the runtime and enabling `UHTDumper`.
+The UE4SS UHT dump is not committed in this public repo. Generate it locally by deploying the runtime and either running `dump_modding_artifacts.ps1 -LaunchForUht` or manually enabling `UHTDumper` for a dedicated dump pass.
 
 That dump is useful for:
 

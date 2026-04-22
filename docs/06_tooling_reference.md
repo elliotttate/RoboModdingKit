@@ -34,6 +34,7 @@ Located at:
 - `tooling/setup/dump_aes_keys.py`
 - `tooling/setup/doctor_moddingkit.ps1`
 - `tooling/setup/generate_editor_project.ps1`
+- `tooling/setup/install_suzie.ps1`
 - `tooling/setup/package_mod.ps1`
 - `tooling/setup/install_mod.ps1`
 - `tooling/setup/uninstall_mod.ps1`
@@ -81,6 +82,8 @@ Located in `tooling/external_sources` after running the bootstrap:
   - AES candidate scan for the Shipping executable, with optional `repak` verification
 - `doctor_moddingkit.ps1`
   - preflight check for the engine, game install, key tool binaries, templates, and generated outputs; accepts `-GeneratedProjectRoot` when you keep the generated project outside the default local path
+- `install_suzie.ps1`
+  - mirrors the bundled Suzie plugin into a generated RoboQuest project, copies `RoboQuest.jmap` to `Content/DynamicClasses`, and enables the plugin in the local `.uproject`
 - `package_mod.ps1`
   - packages a UE4SS template into a `.zip` or a staged content tree into a RoboQuest-compatible sidecar `.pak`; pak packaging reads `mount_point`, `version`, `compression`, and `path_hash_seed` from `robomod.json` unless overridden
 - `install_mod.ps1`
@@ -90,7 +93,7 @@ Located in `tooling/external_sources` after running the bootstrap:
 - `RE-UE4SS-v301`
   - UE4SS v3.0.1 source tree used for the RoboQuest patch work
 - `Suzie`
-  - useful reference for a dynamic `jmap`-driven plugin/editor workflow
+  - bundled as a RoboQuest-tested UE 4.26 plugin template and also available as an external reference clone
 - `UEVR` and `uevr-mcp`
   - useful for live introspection and runtime experiments
 - `UE4GameProjectGenerator`

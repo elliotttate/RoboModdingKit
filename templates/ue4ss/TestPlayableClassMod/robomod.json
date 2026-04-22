@@ -1,0 +1,6 @@
+{
+  "name": "TestPlayableClassMod",
+  "type": "ue4ss",
+  "entry_script": "Scripts/main.lua",
+  "description": "UE4SS runtime probe for RoboQuest player-class and menu injection."
+}

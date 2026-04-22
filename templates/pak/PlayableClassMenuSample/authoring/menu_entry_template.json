@@ -1,0 +1,29 @@
+{
+  "title_menu_entries": [
+    {
+      "widget_to_override": "/Game/Blueprint/HUD/Menus/HUD_MenuTitle.HUD_MenuTitle_C",
+      "button_widget": "/Game/Blueprint/HUD/Base/Button/WGT_TitleMenu_Button.WGT_TitleMenu_Button_C",
+      "new_button_label": "Classes+",
+      "opens_widget": "/Game/Mods/PlayableClassMenuSample/UI/HUD_RMK_ClassHub.HUD_RMK_ClassHub_C",
+      "notes": "Add the button beside the stock title-menu buttons and route it into the same page-transition flow used for other menu pages."
+    }
+  ],
+  "basecamp_menu_entries": [
+    {
+      "interactive_actor_class": "/Script/RoboQuest.AInteractiveBasecampMenu",
+      "menu_class_property": "/Game/Mods/PlayableClassMenuSample/UI/WGT_RMK_BasecampClassTerminal.WGT_RMK_BasecampClassTerminal_C",
+      "selector_widget_to_reuse": "/Game/Blueprint/HUD/Base/Selector/WGT_ASelector.WGT_ASelector_C",
+      "notes": "Point MenuClass at the custom widget and place or duplicate the interactive in basecamp so the class roster is reachable in-world."
+    }
+  ],
+  "runtime_checks": [
+    {
+      "function": "/Script/RoboQuest.RQBlueprintLibrary:SyncLoadAllActivePlayerClassRowNames",
+      "expected_result": "Your new row name appears once bIsActive is true and the staged DT_PlayerClasses override is mounted."
+    },
+    {
+      "function": "/Script/RoboQuest.AGameInstance:SetPlayerClass",
+      "expected_result": "Selecting the new menu entry ends with the chosen row name being stored as the current class."
+    }
+  ]
+}
